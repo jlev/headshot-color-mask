@@ -1,4 +1,4 @@
-var video, image, drawing, logarea;
+var video, image, drawing, loading, logarea;
 
 function log(text) {
   console.log(text);
@@ -86,6 +86,7 @@ var resetCallback = function(event) {
   clearCanvas(drawing);
   hideElement(drawing);
 
+  hideElement(loading);
   showElement(video);
 }
 
@@ -93,6 +94,7 @@ function main() {
   video = document.getElementById('video');
   image = document.getElementById('image');
   drawing = document.getElementById('drawing');
+  loading = document.getElementById('loading')
   logarea = document.getElementById('log');
 
   if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {

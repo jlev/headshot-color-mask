@@ -8,6 +8,10 @@ canvas#drawing {
     position: absolute;
 }
 
+img#loading {
+    position:relative;
+}
+
 textarea#log {
     margin-top: 20px;
     width: 100%;

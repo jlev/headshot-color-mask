@@ -1,4 +1,4 @@
-# Profile Maker
+# Profile Masker
 
 ## Development
 - `pip install -r requirements.txt`

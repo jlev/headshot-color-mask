@@ -28,19 +28,22 @@ def image_mask():
   image = convert.data_uri_to_cv(data.get('image'))
 
   face = detect.face(image)
-  eyes = detect.eyes(image)
-
   if not face:
     return make_response(jsonify({'error': 'no faces found'}), 400)
 
-  masked = mask.grab(image, face, eyes)
+  masked = mask.grab(image, face)
   return jsonify({'image': convert.cv_to_data_uri(masked)})
 
-# @app.route('/image/refine', methods=['POST'])
-# def image_refine():
-#   data = request.get_json()
-#   new_file = mask.refine(data['image'], data['rect_coords'], data['drawing'])
-#   return jsonify()
+  @app.route('/image/refine', methods=['POST'])
+  def image_refine():
+    data = request.form.to_dict()
+    image = convert.data_uri_to_cv(data.get('image'))
+    eyes = detect.eyes(image)
+    if not eyes:
+      return make_response(jsonify({'error': 'no eyes found'}), 400)
+
+    refined = mask.refine(masked, face, eyes)
+    return jsonify({'image': convert.cv_to_data_uri(masked)})
 
 if __name__ == "__main__":
     app.run(debug=True)

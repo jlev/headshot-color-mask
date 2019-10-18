@@ -27,8 +27,8 @@ def face(orig_image):
     # determine face matched rectangles
     rect = ()
     for (x, y, w, h) in faces:
-        pad_x = math.floor(w*0.2) # expand width by 20%
-        pad_y = math.floor(h*0.3) # expand height by 30%
+        pad_x = math.floor(w*0.5) # expand width by 50%
+        pad_y = math.floor(h*0.4) # expand height by 40%
         rect = (x-pad_x, y-pad_y, x+w+pad_x, y+h+pad_y)
 
     if DEBUG:

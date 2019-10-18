@@ -1,5 +1,4 @@
 var video, image, drawing, logarea;
-var facerect;
 
 function log(text) {
   console.log(text);
@@ -40,40 +39,26 @@ var snapCallback = function(event) {
   formData.append('image', imageData);
   log('uploading');
 
-  // upload to server
-  var response = fetch('/image/detectface', {
-    method: 'POST',
-    body: formData
-  }).then(function(response) {
-    return response.json();
-  }).then(function(result) {
-    log('detected face');
-    // draw to canvas
-    var drawingContext = drawing.getContext('2d');
-    drawingContext.fillStyle = 'rgba(225,225,225,0.5)';
-    drawingContext.fillRect(...result.rect);
-    // store rect to state
-    facerect = result.rect;
-  });
-};
+  // show processing indicator
+  showElement(loading);
 
-var maskCallback = function(event) {
-  var imageData = image.toDataURL();
-  var formData = new FormData();
-  formData.append('image', imageData);
-  formData.append('rect', facerect);
-
-  log('masking');
   var response = fetch('/image/mask', {
     method: 'POST',
     body: formData
   }).then(function(response) {
-    return response.json();
+    if (response.ok) {
+     return response.json();
+    } else {
+      log('error '+response.error);
+      return false;
+    }
   }).then(function(result) {
-    log('got crop');
+    if (!result) { return; }
+    log('got mask');
     // clear existing image and drawing
     clearCanvas(image);
     clearCanvas(drawing);
+    hideElement(loading);
     console.log(result);
 
     var imageContext = image.getContext('2d');
@@ -90,11 +75,6 @@ var maskCallback = function(event) {
       imageContext.globalCompositeOperation = 'none';
     }
     maskImage.src = result.image; // set src from result dataURI
-    
-    // draw frame
-    var drawingContext = drawing.getContext('2d');
-    drawingContext.fillStyle = 'rgba(225,225,225,1)';
-    drawingContext.fillRect(facerect);
   });
 }
 

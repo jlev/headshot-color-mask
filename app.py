@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, render_template, g, redirect, Response, url_for, session, send_from_directory
+from flask import Flask, request, render_template, make_response, send_from_directory
 from flask.json import JSONEncoder
 from flask import jsonify
 
@@ -22,21 +22,18 @@ app.json_encoder = NumpyJSONEncoder
 def home():
     return render_template("index.html")
 
-@app.route('/image/detectface', methods=['POST'])
-def detect_face():
-  # takes a form with a posted image
-  # returns face bounding box in canvas coords
-  data = request.form.to_dict()
-  image = convert.data_uri_to_cv(data.get('image'))
-  rect = detect.face(image)
-  return jsonify({'rect': convert.cv_rect_to_canvas(rect)})
-
 @app.route('/image/mask', methods=['POST'])
 def image_mask():
   data = request.form.to_dict()
   image = convert.data_uri_to_cv(data.get('image'))
-  rect = convert.canvas_rect_to_cv(data.get('rect'))
-  masked = mask.rect(image, rect)
+
+  face = detect.face(image)
+  eyes = detect.eyes(image)
+
+  if not face:
+    return make_response(jsonify({'error': 'no faces found'}), 400)
+
+  masked = mask.grab(image, face, eyes)
   return jsonify({'image': convert.cv_to_data_uri(masked)})
 
 # @app.route('/image/refine', methods=['POST'])

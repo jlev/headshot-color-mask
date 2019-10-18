@@ -16,6 +16,23 @@ function clearCanvas(canvas) {
   context = canvas.getContext('2d');
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
+function drawGuide(canvas) {
+  // gives a nice ellipse for the user to place their head in
+  var centerX = canvas.width/2;
+  var centerY = canvas.height*2/5;
+  var radiusX = canvas.height/5;
+  var radiusY = canvas.height/4;
+  
+  var context = canvas.getContext('2d');
+  context.strokeStyle = 'white';
+  context.lineWidth = 5;
+  context.beginPath();
+  context.ellipse(centerX, centerY, radiusX, radiusY,
+    0, // rotation
+    0, 2 * Math.PI); // start, end radians
+  context.stroke();
+  context.closePath();
+}
 
 var videoCallback = function(stream) {
   log('got video stream');
@@ -79,15 +96,17 @@ var snapCallback = function(event) {
 }
 
 var resetCallback = function(event) {
-  log('reset');
   clearCanvas(image);
   hideElement(image);
 
   clearCanvas(drawing);
-  hideElement(drawing);
+  showElement(drawing);
 
   hideElement(loading);
   showElement(video);
+
+  drawGuide(drawing);
+  log('reset');
 }
 
 function main() {
@@ -105,8 +124,9 @@ function main() {
   }
 
   document.getElementById("snap").addEventListener("click", snapCallback);
-  document.getElementById("mask").addEventListener("click", maskCallback);
   document.getElementById("reset").addEventListener("click", resetCallback);
+
+  resetCallback();
 }
 
 window.onload = main;

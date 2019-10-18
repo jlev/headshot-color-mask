@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+
+<html>
+   <head>
+      <title>Profile Masker</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+      <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+      <script type="text/javascript" src="{{ url_for('static', filename='js/webcam.js') }}"></script>  
+    </head>
+
+    <body> 
+      <div class="container-fluid">
+        <nav class="navbar navbar-dark bg-dark">
+          <span class="navbar-brand mb-0 h_text">Profile Masker</span>
+        </nav>
+        <div id="webcam" class="col-8 mt-2 mx-auto">
+          <div class="row">
+            <video id="video" class="flip-horizontal" width="640" height="480" autoplay></video>
+            <canvas id="image" class="flip-horizontal d-none" width="640" height="480" ></canvas>
+            <canvas id="drawing" class="flip-horizontal d-none" width="640" height="480" ></canvas>
+          </div>
+          <div class="row flex-row justify-content-around mt-2">
+            <button id="snap" class="btn btn-success">Take Photo</button>
+            <button id="mask" class="btn btn-info">Mask Face</button>
+            <button id="reset" class="btn btn-warning ml-5">Reset</button>
+          </div>
+          <div class="row">
+            <textarea id="log" readonly>pageload</textarea>
+          </div>
+        </div>
+    </div>
+    </body>
+
+</html>

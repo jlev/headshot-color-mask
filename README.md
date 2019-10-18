@@ -6,3 +6,7 @@
 - `flask run`
 
 ## Deployment
+
+### Heroku
+- Add `https://github.com/heroku/heroku-buildpack-apt` to your application's buildpack
+- so it will install the packages in Aptfile

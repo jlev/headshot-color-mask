@@ -18,31 +18,19 @@ function clearCanvas(canvas) {
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 function drawGuide(canvas) {
-  // gives a nice ellipse for the user to place their head in
-  var centerX = canvas.width/2;
-  var centerY = canvas.height*2/5;
-  var radiusX = canvas.height/5;
-  var radiusY = canvas.height/4;
-  
-  var context = canvas.getContext('2d');
-  context.strokeStyle = 'white';
-  context.lineWidth = 5;
-  context.beginPath();
-  context.ellipse(centerX, centerY, radiusX, radiusY,
-    0, // rotation
-    0, 2 * Math.PI); // start, end radians
-  context.stroke();
-  context.closePath();
+  loadAndDrawImage('/static/guide.svg', canvas);
 }
-function loadAndDrawImage(src) {
+function loadAndDrawImage(src, canvas, x, y) {
   return new Promise((resolve, reject) => {
     const img = new Image();
-    img.addEventListener("load", () => resolve(img));
+    img.addEventListener("load", () => {
+      resolve(img);
+
+      var context = canvas.getContext('2d');
+      context.drawImage(img,0,0,img.width,img.height);
+    });
     img.addEventListener("error", err => reject(err));
     img.src = src;
-
-    var imageContext = image.getContext('2d');
-    imageContext.drawImage(img,0,0,img.width,img.height);
   });
 };
 
@@ -70,7 +58,7 @@ var uploadCallback = function(event) {
   log('file!');
   clearCanvas(image);
 
-  loadAndDrawImage('/static/example.png').then(function() {
+  loadAndDrawImage('/static/example.png', image).then(function() {
     hideElement(video);
     showElement(image);
     showElement(drawing);
@@ -106,15 +94,14 @@ var uploadImageFromCanvas = function() {
     clearCanvas(image);
     clearCanvas(drawing);
     hideElement(loading);
-    console.log(result);
 
     var imageContext = image.getContext('2d');
     // add background color
     imageContext.fillStyle = "#BDDECF";
-    imageContext.fillRect(0, 0, image.width, image.height)
+    imageContext.fillRect(0, 0, image.width, image.height);
 
     // load resulting data URI into image canvas
-    loadAndDrawImage(result.image);
+    loadAndDrawImage(result.image, image);
 
     // TODO, filter so it's greyscale?
   });
@@ -125,12 +112,12 @@ var resetCallback = function(event) {
   hideElement(image);
 
   clearCanvas(drawing);
+  drawGuide(drawing);
   showElement(drawing);
 
   hideElement(loading);
   showElement(video);
 
-  drawGuide(drawing);
   log('reset');
 }
 

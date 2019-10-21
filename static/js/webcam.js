@@ -33,6 +33,17 @@ function drawGuide(canvas) {
   context.stroke();
   context.closePath();
 }
+function loadAndDrawImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.addEventListener("load", () => resolve(img));
+    img.addEventListener("error", err => reject(err));
+    img.src = src;
+
+    var imageContext = image.getContext('2d');
+    imageContext.drawImage(img,0,0);
+  });
+};
 
 var videoCallback = function(stream) {
   log('got video stream');
@@ -50,6 +61,22 @@ var snapCallback = function(event) {
   showElement(image);
   showElement(drawing);
 
+  uploadImageFromCanvas();
+}
+
+var uploadCallback = function(event) {
+  log('file!');
+
+  loadAndDrawImage('/static/example.png').then(function() {
+    hideElement(video);
+    showElement(image);
+    showElement(drawing);
+
+    uploadImageFromCanvas();
+  });
+}
+
+var uploadImageFromCanvas = function() {
   // convert canvas to base64 image, put in form
   var imageData = image.toDataURL();
   var formData = new FormData();
@@ -83,15 +110,10 @@ var snapCallback = function(event) {
     imageContext.fillStyle = "#BDDECF";
     imageContext.fillRect(0, 0, image.width, image.height)
 
-    // draw image to canvas, with reduced opacity
-    var maskImage = new Image();
-    // weird trick to ensure image element is created before drawing
-    maskImage.onload = function() {
-      imageContext.globalCompositeOperation = 'luminosity'
-      imageContext.drawImage(maskImage, 0, 0, image.width, image.height);
-      imageContext.globalCompositeOperation = 'none';
-    }
-    maskImage.src = result.image; // set src from result dataURI
+    // load resulting data URI into image canvas
+    loadAndDrawImage(result.image);
+
+    // TODO, filter so it's greyscale?
   });
 }
 
@@ -124,6 +146,7 @@ function main() {
   }
 
   document.getElementById("snap").addEventListener("click", snapCallback);
+  document.getElementById("upload").addEventListener("click", uploadCallback);
   document.getElementById("reset").addEventListener("click", resetCallback);
 
   resetCallback();

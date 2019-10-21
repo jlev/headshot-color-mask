@@ -4,6 +4,10 @@
     -moz-transform:rotateY(180deg); /* Firefox */
 }
 
+.button-row {
+    width: 640px;
+}
+
 canvas#drawing {
     position: absolute;
 }
@@ -14,7 +18,7 @@ img#loading {
 
 textarea#log {
     margin-top: 20px;
-    width: 100%;
+    width: 640px;
     height: 100px;
     color: 'darkgray';
 }

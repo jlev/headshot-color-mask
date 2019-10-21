@@ -8,6 +8,9 @@ from image import convert, detect, mask
 
 templates = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 app = Flask(__name__, template_folder=templates)
+if app.debug:
+    # disable static file caching
+    app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 # weird trick to get flask to handle numpy int types
 class NumpyJSONEncoder(JSONEncoder):

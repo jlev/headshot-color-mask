@@ -18,15 +18,15 @@ function clearCanvas(canvas) {
   context.clearRect(0, 0, canvas.width, canvas.height);
 }
 function drawGuide(canvas) {
-  loadAndDrawImage('/static/guide.svg', canvas);
+  var canvasContext = canvas.getContext('2d');
+  loadAndDrawImage('/static/guide.svg', canvasContext);
 }
-function loadAndDrawImage(src, canvas, x, y) {
+function loadAndDrawImage(src, context, x, y) {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.addEventListener("load", () => {
       resolve(img);
 
-      var context = canvas.getContext('2d');
       context.drawImage(img,0,0,img.width,img.height);
     });
     img.addEventListener("error", err => reject(err));
@@ -57,8 +57,8 @@ var snapCallback = function(event) {
 var uploadCallback = function(event) {
   log('file!');
   clearCanvas(image);
-
-  loadAndDrawImage('/static/example.png', image).then(function() {
+  var imageContext = image.getContext('2d');
+  loadAndDrawImage('/static/example.png', imageContext).then(function() {
     hideElement(video);
     showElement(image);
     showElement(drawing);
@@ -100,10 +100,10 @@ var uploadImageFromCanvas = function() {
     imageContext.fillStyle = "#BDDECF";
     imageContext.fillRect(0, 0, image.width, image.height);
 
-    // load resulting data URI into image canvas
-    loadAndDrawImage(result.image, image);
-
-    // TODO, filter so it's greyscale?
+    // load resulting data URI into image canvas, as grayscale
+    imageContext.globalCompositeOperation = 'luminosity';
+    loadAndDrawImage(result.image, imageContext);
+    imageContext.globalCompositeOperation = 'none';
   });
 }
 

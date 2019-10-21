@@ -11,11 +11,11 @@ app = Flask(__name__, template_folder=templates)
 
 # weird trick to get flask to handle numpy int types
 class NumpyJSONEncoder(JSONEncoder):
-  def default(self, obj):
-    try:
-      return convert.cv_to_json(obj)
-    except TypeError:
-      return JSONEncoder.default(self, obj)
+    def default(self, obj):
+        try:
+            return convert.cv_to_json(obj)
+        except TypeError:
+            return JSONEncoder.default(self, obj)
 app.json_encoder = NumpyJSONEncoder
 
 @app.route('/')
@@ -24,23 +24,23 @@ def home():
 
 @app.route('/image/mask', methods=['POST'])
 def image_mask():
-  data = request.form.to_dict()
-  image = convert.data_uri_to_cv(data.get('image'))
+    data = request.form.to_dict()
+    image = convert.data_uri_to_cv(data.get('image'))
 
-  face = detect.face(image)
-  if not face:
-    return make_response(jsonify({'error': 'no faces found'}), 400)
+    face = detect.face(image)
+    if not face:
+        return make_response(jsonify({'error': 'no faces found'}), 400)
 
-  masked = mask.grab(image, face)
-  return jsonify({'image': convert.cv_to_data_uri(masked)})
+    masked = mask.grab(image, face)
+    return jsonify({'image': convert.cv_to_data_uri(masked)})
 
-  @app.route('/image/refine', methods=['POST'])
-  def image_refine():
+@app.route('/image/refine', methods=['POST'])
+def image_refine():
     data = request.form.to_dict()
     image = convert.data_uri_to_cv(data.get('image'))
     eyes = detect.eyes(image)
     if not eyes:
-      return make_response(jsonify({'error': 'no eyes found'}), 400)
+        return make_response(jsonify({'error': 'no eyes found'}), 400)
 
     refined = mask.refine(masked, face, eyes)
     return jsonify({'image': convert.cv_to_data_uri(masked)})

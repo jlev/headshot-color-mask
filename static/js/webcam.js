@@ -41,7 +41,7 @@ function loadAndDrawImage(src) {
     img.src = src;
 
     var imageContext = image.getContext('2d');
-    imageContext.drawImage(img,0,0);
+    imageContext.drawImage(img,0,0,img.width,img.height);
   });
 };
 
@@ -53,6 +53,7 @@ var videoCallback = function(stream) {
 
 var snapCallback = function(event) {
   log('snap!');
+  clearCanvas(image);
   
   // pause video, draw current frame to canvas
   var imageContext = image.getContext('2d');
@@ -66,6 +67,7 @@ var snapCallback = function(event) {
 
 var uploadCallback = function(event) {
   log('file!');
+  clearCanvas(image);
 
   loadAndDrawImage('/static/example.png').then(function() {
     hideElement(video);

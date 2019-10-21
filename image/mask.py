@@ -14,7 +14,7 @@ def blackToAlpha(image):
     masked_image = cv2.merge(rgba,4)
     return masked_image
 
-def grab(image, rect):
+def grab(image, rect, blur=False):
     if DEBUG:
         cv2.imwrite('output/mask_in.png', image)
 
@@ -26,13 +26,18 @@ def grab(image, rect):
 
     # apply mask to image and export
     background_mask = np.where((mask==cv2.GC_PR_BGD),0,1).astype('uint8')
+    
+    # blur mask to soften edges
+    if blur:
+        background_mask = cv2.GaussianBlur(background_mask,(5,5), 0)
+
     masked_image = image*background_mask[:,:,np.newaxis]
     if DEBUG:
         cv2.imwrite('output/mask_black.png', masked_image)
 
     return masked_image
 
-def refine(image, points):
+def refine(image, points, blur=False):
     # second pass using points list flagged as foreground or background
 
     mask = np.zeros(image.shape[:2], np.uint8)
@@ -59,6 +64,11 @@ def refine(image, points):
     # do grabcut with points, but no rectangle
     cv2.grabCut(image, mask, None, background, foreground, ITERATIONS, cv2.GC_INIT_WITH_MASK)
     background_mask = np.where((mask==cv2.GC_PR_BGD),0,1).astype('uint8')
+
+    # blur mask to soften edges
+    if blur:
+        background_mask = cv2.GaussianBlur(background_mask,(5,5), 0)
+
     masked_image = image*background_mask[:,:,np.newaxis]
 
     if DEBUG:

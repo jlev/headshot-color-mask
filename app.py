@@ -33,7 +33,7 @@ def image_mask():
     face = detect.face(image)
     if not face:
         return make_response(jsonify({'error': 'no faces found'}), 400)
-    masked = mask.grab(image, face)
+    masked = mask.grab(image, face,)
     
     eyes = detect.eyes(image)
     if not eyes:
@@ -42,7 +42,7 @@ def image_mask():
     corners = detect.face_rect_corners(face, radius=20, padding=40)
     probable_points = eyes + corners
 
-    refined = mask.refine(masked, probable_points)
+    refined = mask.refine(masked, probable_points, blur=True)
     refined_alpha = mask.blackToAlpha(refined)
     return jsonify({'image': convert.cv_to_data_uri(refined_alpha)})
 

@@ -66,3 +66,20 @@ def eyes(orig_image):
         cv2.imwrite('output/eyes_detect.png', image)
         
     return circles
+
+def face_rect_corners(rect, radius=20, padding=0):
+    # take a CV rectangle, return a list of small circles at the corners (optionally padded in)
+    # as x,y,r,c
+    circles = []
+
+    # rect is x_left, y_top, x_right, y_bottom
+    # line down from top left, probable background
+    circles.append((rect[0]+padding, rect[1]+padding, radius, cv2.GC_PR_BGD))
+    # line down from top right, probable background
+    circles.append((rect[2]-padding, rect[1]+padding, radius, cv2.GC_PR_BGD))
+    # bottom left, probable foreground
+    circles.append((rect[0]+padding, rect[3]-padding, radius, cv2.GC_FGD))
+    # bottom right, probable foreground
+    circles.append((rect[2]-padding, rect[3]-padding, radius, cv2.GC_FGD))
+
+    return circles

@@ -30,20 +30,29 @@ def image_mask():
     face = detect.face(image)
     if not face:
         return make_response(jsonify({'error': 'no faces found'}), 400)
-
     masked = mask.grab(image, face)
-    return jsonify({'image': convert.cv_to_data_uri(masked)})
+    
+    eyes = detect.eyes(image)
+    if not eyes:
+        eyes = []
+       # return make_response(jsonify({'error': 'no eyes found'}), 400)
+    corners = detect.face_rect_corners(face, radius=20, padding=40)
+    probable_points = eyes + corners
+
+    refined = mask.refine(masked, probable_points)
+    refined_alpha = mask.blackToAlpha(refined)
+    return jsonify({'image': convert.cv_to_data_uri(refined_alpha)})
 
 @app.route('/image/refine', methods=['POST'])
 def image_refine():
     data = request.form.to_dict()
     image = convert.data_uri_to_cv(data.get('image'))
-    eyes = detect.eyes(image)
-    if not eyes:
-        return make_response(jsonify({'error': 'no eyes found'}), 400)
+    rect = data.get('rect')
+    points = data.get('points')
 
-    refined = mask.refine(masked, face, eyes)
-    return jsonify({'image': convert.cv_to_data_uri(masked)})
+    refined = mask.refine(masked, rect, points)
+    refined_alpha = mask.blackToAlpha(refined)
+    return jsonify({'image': convert.cv_to_data_uri(refined_alpha)})
 
 if __name__ == "__main__":
     app.run(debug=True)

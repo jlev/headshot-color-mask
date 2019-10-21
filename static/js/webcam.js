@@ -5,12 +5,13 @@ function log(text) {
   logarea.textContent = text+'\n'+logarea.textContent;
 }
 function hideElement(element) {
+  element.classList.remove('d-inline');
   element.classList.remove('d-block');
   element.classList.add('d-none')
 }
-function showElement(element) {
+function showElement(element, inline) {
   element.classList.remove('d-none');
-  element.classList.add('d-block');
+  element.classList.add(inline ? 'd-inline':'d-block');
 }
 function clearCanvas(canvas) {
   context = canvas.getContext('2d');
@@ -86,7 +87,7 @@ var uploadImageFromCanvas = function() {
   log('uploading');
 
   // show processing indicator
-  showElement(loading);
+  showElement(loading, true);
 
   var response = fetch('/image/mask', {
     method: 'POST',

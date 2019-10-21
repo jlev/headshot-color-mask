@@ -25,9 +25,10 @@
             <button id="snap" class="btn btn-primary">Snap</button>
             <button id="upload" class="btn btn-secondary" type="file">Upload</button>
             <button id="refine" class="btn btn-light">Refine</button>
+            <img id="loading" src="{{ url_for('static', filename='loading.gif') }}" class="d-none"/>
+
             <button id="reset" class="btn btn-warning float-right">Reset</button>
           </div>
-          <img id="loading" src="{{ url_for('static', filename='loading.gif') }}" class="d-none"/>
           <div class="row">
             <textarea id="log" readonly>pageload</textarea>
           </div>
